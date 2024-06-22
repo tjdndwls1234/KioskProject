@@ -13,6 +13,11 @@ public class CafeKiosk extends JFrame {
 
     private CardLayout cardLayout;
     private JPanel cardPanel;
+    
+    private static JPanel cartPanel;
+    //카트 멤버 생성 접근할수있게 Static으로
+    private static Cart cart;
+
 
     public CafeKiosk() {
 
@@ -76,7 +81,7 @@ public class CafeKiosk extends JFrame {
 	    
 	    Label topText = new Label();
 	    topText.setText("CAFE KIOSK");
-	    topText.setFont(font1);
+	    topText.setFont(new Font(Font.MONOSPACED, Font.BOLD, 30));
 	    p1.add(topText);
 	
 	    typePanel.add(p1, BorderLayout.NORTH);
@@ -97,17 +102,55 @@ public class CafeKiosk extends JFrame {
         
         
 
+	    ///////////////////////////////////////
+	    //cart 패널
+	    cart =new Cart();
+	    JPanel payPanel=new JPanel();
+	    JButton payButton=new JButton("결제");
+	    cartPanel=new JPanel();      
+	    cartPanel.setBackground(Color.WHITE);
+	    JScrollPane cartScrollPane = new JScrollPane(cartPanel);
+	    cartScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	    cartScrollPane.setPreferredSize(new Dimension(300, 200));
+	    payButton.addActionListener(new Payment(cart,cartPanel));
+	    payPanel.add(cartScrollPane);
+	    payPanel.add(payButton);
+	    
+	    //////////////////////////////////////////////
         // 카테고리별 커피, 음료, 디저트 패널
         JPanel coffeePanel = new JPanel(new GridLayout(3, 5));
 
         for (int i = 0; i < coffeeMenu.size(); i++) {
             FoodMenu menu = coffeeMenu.get(i);
-            String name = menu.getName();
-            String price = menu.getPrice();
-            String sizeUpPrice = menu.getSizeUpPrice();
-            String img = menu.getImg();
+            
 
-            JPanel itemPanel = createMenuItemPanel(name, price, sizeUpPrice, img);
+            JPanel itemPanel = new JPanel(new BorderLayout());
+
+            // 이미지 아이콘 생성 및 추가
+            ImageIcon icon = new ImageIcon(menu.getImg());
+            JButton imgButton = new JButton(icon);
+            itemPanel.add(imgButton, BorderLayout.CENTER);
+            imgButton.addActionListener(new OrderButtonListener(cart, menu, cartPanel));
+            
+            // 레이블과 버튼이 포함된 패널 생성
+            JPanel textPanel = new JPanel();
+            textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS)); // BoxLayout으로 변경
+            textPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // 패널 가운데 정렬 설정
+
+            JLabel nameLabel = new JLabel(menu.getName());
+            nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // 이름 레이블 가운데 정렬
+            textPanel.add(nameLabel);
+
+            // 가격과 사이즈업 가격을 표시할 레이블 생성 및 설정
+            JLabel priceLabel = new JLabel();
+            priceLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // 가격 레이블 가운데 정렬
+            if(menu.getSizeUpPrice() == null) {
+            	priceLabel.setText(menu.getPrice()+"원");
+            }
+            else priceLabel.setText(menu.getPrice()+"원" + "/" + menu.getSizeUpPrice()+"원"); // 사이즈업 가격이 있는 경우 함께 표시
+            textPanel.add(priceLabel);
+
+            itemPanel.add(textPanel, BorderLayout.SOUTH);
             coffeePanel.add(itemPanel);
         }
         for (int i = coffeeMenu.size(); i < 15; i++) {
@@ -119,12 +162,34 @@ public class CafeKiosk extends JFrame {
 
         for (int i = 0; i < drinkMenu.size(); i++) {
             FoodMenu menu = drinkMenu.get(i);
-            String name = menu.getName();
-            String price = menu.getPrice();
-            String sizeUpPrice = menu.getSizeUpPrice();
-            String img = menu.getImg();
+            
+            JPanel itemPanel = new JPanel(new BorderLayout());
 
-            JPanel itemPanel = createMenuItemPanel(name, price, sizeUpPrice, img);
+            // 이미지 아이콘 생성 및 추가
+            ImageIcon icon = new ImageIcon(menu.getImg());
+            JButton imgButton = new JButton(icon);
+            itemPanel.add(imgButton, BorderLayout.CENTER);
+            imgButton.addActionListener(new NonStateOrderButtonListener(cart, menu, cartPanel));
+            
+            // 레이블과 버튼이 포함된 패널 생성
+            JPanel textPanel = new JPanel();
+            textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS)); // BoxLayout으로 변경
+            textPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // 패널 가운데 정렬 설정
+
+            JLabel nameLabel = new JLabel(menu.getName());
+            nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // 이름 레이블 가운데 정렬
+            textPanel.add(nameLabel);
+
+            // 가격과 사이즈업 가격을 표시할 레이블 생성 및 설정
+            JLabel priceLabel = new JLabel();
+            priceLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // 가격 레이블 가운데 정렬
+            if(menu.getSizeUpPrice() == null) {
+            	priceLabel.setText(menu.getPrice()+"원");
+            }
+            else priceLabel.setText(menu.getPrice()+"원" + "/" + menu.getSizeUpPrice()+"원"); // 사이즈업 가격이 있는 경우 함께 표시
+            textPanel.add(priceLabel);
+
+            itemPanel.add(textPanel, BorderLayout.SOUTH);
             drinkPanel.add(itemPanel);
         }
         for (int i = drinkMenu.size(); i < 15; i++) {
@@ -135,11 +200,34 @@ public class CafeKiosk extends JFrame {
 
         for (int i = 0; i < dessertMenu.size(); i++) {
             FoodMenu menu = dessertMenu.get(i);
-            String name = menu.getName();
-            String price = menu.getPrice();
-            String img = menu.getImg();
+            
+            JPanel itemPanel = new JPanel(new BorderLayout());
 
-            JPanel itemPanel = createMenuItemPanel(name, price, img);
+            // 이미지 아이콘 생성 및 추가
+            ImageIcon icon = new ImageIcon(menu.getImg());
+            JButton imgButton = new JButton(icon);
+            itemPanel.add(imgButton, BorderLayout.CENTER);
+            imgButton.addActionListener(new NonStateOrderButtonListener(cart, menu, cartPanel));
+            
+            // 레이블과 버튼이 포함된 패널 생성
+            JPanel textPanel = new JPanel();
+            textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS)); // BoxLayout으로 변경
+            textPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // 패널 가운데 정렬 설정
+
+            JLabel nameLabel = new JLabel(menu.getName());
+            nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // 이름 레이블 가운데 정렬
+            textPanel.add(nameLabel);
+
+            // 가격과 사이즈업 가격을 표시할 레이블 생성 및 설정
+            JLabel priceLabel = new JLabel();
+            priceLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // 가격 레이블 가운데 정렬
+            if(menu.getSizeUpPrice() == null) {
+            	priceLabel.setText(menu.getPrice()+"원");
+            }
+            else priceLabel.setText(menu.getPrice()+"원" + "/" + menu.getSizeUpPrice()+"원"); // 사이즈업 가격이 있는 경우 함께 표시
+            textPanel.add(priceLabel);
+
+            itemPanel.add(textPanel, BorderLayout.SOUTH);
             dessertPanel.add(itemPanel);
         }
         for (int i = dessertMenu.size(); i < 15; i++) {
@@ -172,7 +260,6 @@ public class CafeKiosk extends JFrame {
             }
         });
 
-
         
         cardPanel.setBackground(Color.LIGHT_GRAY);
 
@@ -180,69 +267,15 @@ public class CafeKiosk extends JFrame {
 
         c.add(typePanel, BorderLayout.NORTH);
         c.add(cardPanel, BorderLayout.CENTER);
+        c.add(payPanel,BorderLayout.SOUTH);
 
         frame.setVisible(true);
         frame.setSize(800, 800);
     }
 
-    // 각 메뉴마다 이미지, 버튼, 라벨 생성 메소드
-    private static JPanel createMenuItemPanel(String name, String price, String sizeUpPrice, String img) {
-        JPanel itemPanel = new JPanel(new BorderLayout());
+  
 
-        // 이미지 아이콘 생성 및 추가
-        ImageIcon icon = new ImageIcon(img);
-        JButton imgButton = new JButton(icon);
-        itemPanel.add(imgButton, BorderLayout.CENTER);
-
-        // 레이블과 버튼이 포함된 패널 생성
-        JPanel textPanel = new JPanel();
-        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS)); // BoxLayout으로 변경
-        textPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // 패널 가운데 정렬 설정
-
-        JLabel nameLabel = new JLabel(name);
-        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // 이름 레이블 가운데 정렬
-        textPanel.add(nameLabel);
-
-        // 가격과 사이즈업 가격을 표시할 레이블 생성 및 설정
-        JLabel priceLabel = new JLabel();
-        priceLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // 가격 레이블 가운데 정렬
-        priceLabel.setText(price+"원" + "/" + sizeUpPrice+"원"); // 사이즈업 가격이 있는 경우 함께 표시
-        textPanel.add(priceLabel);
-
-        itemPanel.add(textPanel, BorderLayout.SOUTH);
-
-        return itemPanel;
-    }
-
-
-    private static JPanel createMenuItemPanel(String name, String price, String img) {
-        JPanel itemPanel = new JPanel(new BorderLayout());
-
-        // 이미지 아이콘 생성 및 추가
-        ImageIcon icon = new ImageIcon(img);
-        JButton imgButton = new JButton(icon);
-        itemPanel.add(imgButton, BorderLayout.CENTER);
-
-        // 레이블과 버튼이 포함된 패널 생성
-        JPanel textPanel = new JPanel();
-        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS)); // BoxLayout으로 변경
-        textPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // 패널 가운데 정렬 설정
-
-        JLabel nameLabel = new JLabel(name);
-        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // 이름 레이블 가운데 정렬
-        textPanel.add(nameLabel);
-
-        // 가격과 사이즈업 가격을 표시할 레이블 생성 및 설정
-        JLabel priceLabel = new JLabel();
-        priceLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // 가격 레이블 가운데 정렬
-        priceLabel.setText(price+"원"); 
-        textPanel.add(priceLabel);
-
-        itemPanel.add(textPanel, BorderLayout.SOUTH);
-
-        return itemPanel;
-    }
-
+    
 
     public static void main(String[] args) {
         new CafeKiosk();
