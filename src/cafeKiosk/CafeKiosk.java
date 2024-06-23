@@ -75,48 +75,59 @@ public class CafeKiosk extends JFrame {
         // 카테고리 배너 버튼
         JPanel typePanel = new JPanel(new BorderLayout());
 
-	     // 타이틀 제목 배너
-	    JPanel p1 = new JPanel();
-	    p1.setBackground(Color.ORANGE);
-	    
-	    Label topText = new Label();
-	    topText.setText("CAFE KIOSK");
-	    topText.setFont(new Font(Font.MONOSPACED, Font.BOLD, 30));
-	    p1.add(topText);
-	
-	    typePanel.add(p1, BorderLayout.NORTH);
-	
-	     // 카테고리 배너 버튼
-	    JPanel buttonPanel = new JPanel(new FlowLayout()); // FlowLayout으로 버튼들을 왼쪽에서 오른쪽으로 배치
-	    buttonPanel.setBackground(Color.WHITE); // 배경색 지정
-	
-	    JButton coffeeButton = new JButton("커피");
-	    JButton drinkButton = new JButton("음료/에이드");
-	    JButton dessertButton = new JButton("디저트");
-	
-	    buttonPanel.add(coffeeButton);
-	    buttonPanel.add(drinkButton);
-	    buttonPanel.add(dessertButton);
-	
-	    typePanel.add(buttonPanel, BorderLayout.CENTER);
+        // 타이틀 제목 배너
+       JPanel p1 = new JPanel();
+       p1.setBackground(Color.ORANGE);
+       
+       Label topText = new Label();
+       topText.setText("CAFE KIOSK");
+       topText.setFont(new Font(Font.MONOSPACED, Font.BOLD, 30));
+       p1.add(topText);
+   
+       typePanel.add(p1, BorderLayout.NORTH);
+   
+        // 카테고리 배너 버튼
+       JPanel buttonPanel = new JPanel(new FlowLayout()); // FlowLayout으로 버튼들을 왼쪽에서 오른쪽으로 배치
+       buttonPanel.setBackground(Color.WHITE); // 배경색 지정
+   
+       JButton coffeeButton = new JButton("커피");
+       JButton drinkButton = new JButton("음료/에이드");
+       JButton dessertButton = new JButton("디저트");
+   
+       buttonPanel.add(coffeeButton);
+       buttonPanel.add(drinkButton);
+       buttonPanel.add(dessertButton);
+   
+       typePanel.add(buttonPanel, BorderLayout.CENTER);
         
         
 
-	    ///////////////////////////////////////
-	    //cart 패널
-	    cart =new Cart();
-	    JPanel payPanel=new JPanel();
-	    JButton payButton=new JButton("결제");
-	    cartPanel=new JPanel();      
-	    cartPanel.setBackground(Color.WHITE);
-	    JScrollPane cartScrollPane = new JScrollPane(cartPanel);
-	    cartScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-	    cartScrollPane.setPreferredSize(new Dimension(300, 200));
-	    payButton.addActionListener(new Payment(cart,cartPanel));
-	    payPanel.add(cartScrollPane);
-	    payPanel.add(payButton);
-	    
-	    //////////////////////////////////////////////
+       ///////////////////////////////////////
+       //cart 패널
+       cart =new Cart();
+       JPanel payPanel=new JPanel();
+       JButton payButton=new JButton("결제");
+       cartPanel=new JPanel();      
+       cartPanel.setBackground(Color.WHITE);
+        cartPanel.setLayout(new BoxLayout(cartPanel, BoxLayout.Y_AXIS)); // 아이템을 세로로 배치
+        // 헤더 패널 생성
+        JPanel headerPanel = new JPanel(); 
+        headerPanel.add(new JLabel("메뉴명                          단가                        수량                      합계              "));
+        //
+        headerPanel.setPreferredSize(new Dimension(200,30));
+        JPanel botPanel=new JPanel();
+        cartPanel.add(headerPanel);
+       JScrollPane cartScrollPane = new JScrollPane(cartPanel);
+       cartScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+       cartScrollPane.setPreferredSize(new Dimension(450, 200));
+       payButton.addActionListener(new Payment(cart,cartPanel));
+        botPanel.add(cartScrollPane);
+        botPanel.add(payButton);
+       
+        payPanel.setLayout(new BorderLayout());
+        payPanel.add(headerPanel, BorderLayout.NORTH);
+        payPanel.add(botPanel, BorderLayout.CENTER);
+       //////////////////////////////////////////////
         // 카테고리별 커피, 음료, 디저트 패널
         JPanel coffeePanel = new JPanel(new GridLayout(3, 5));
 
@@ -145,7 +156,7 @@ public class CafeKiosk extends JFrame {
             JLabel priceLabel = new JLabel();
             priceLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // 가격 레이블 가운데 정렬
             if(menu.getSizeUpPrice() == null) {
-            	priceLabel.setText(menu.getPrice()+"원");
+               priceLabel.setText(menu.getPrice()+"원");
             }
             else priceLabel.setText(menu.getPrice()+"원" + "/" + menu.getSizeUpPrice()+"원"); // 사이즈업 가격이 있는 경우 함께 표시
             textPanel.add(priceLabel);
@@ -184,7 +195,7 @@ public class CafeKiosk extends JFrame {
             JLabel priceLabel = new JLabel();
             priceLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // 가격 레이블 가운데 정렬
             if(menu.getSizeUpPrice() == null) {
-            	priceLabel.setText(menu.getPrice()+"원");
+               priceLabel.setText(menu.getPrice()+"원");
             }
             else priceLabel.setText(menu.getPrice()+"원" + "/" + menu.getSizeUpPrice()+"원"); // 사이즈업 가격이 있는 경우 함께 표시
             textPanel.add(priceLabel);
@@ -193,7 +204,7 @@ public class CafeKiosk extends JFrame {
             drinkPanel.add(itemPanel);
         }
         for (int i = drinkMenu.size(); i < 15; i++) {
-        	drinkPanel.add(new JPanel());
+           drinkPanel.add(new JPanel());
         }
 
         JPanel dessertPanel = new JPanel(new GridLayout(3, 5));
@@ -222,7 +233,7 @@ public class CafeKiosk extends JFrame {
             JLabel priceLabel = new JLabel();
             priceLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // 가격 레이블 가운데 정렬
             if(menu.getSizeUpPrice() == null) {
-            	priceLabel.setText(menu.getPrice()+"원");
+               priceLabel.setText(menu.getPrice()+"원");
             }
             else priceLabel.setText(menu.getPrice()+"원" + "/" + menu.getSizeUpPrice()+"원"); // 사이즈업 가격이 있는 경우 함께 표시
             textPanel.add(priceLabel);
@@ -231,7 +242,7 @@ public class CafeKiosk extends JFrame {
             dessertPanel.add(itemPanel);
         }
         for (int i = dessertMenu.size(); i < 15; i++) {
-        	dessertPanel.add(new JPanel());
+           dessertPanel.add(new JPanel());
         }
 
         cardLayout = new CardLayout();

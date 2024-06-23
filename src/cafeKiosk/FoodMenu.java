@@ -7,12 +7,20 @@ public class FoodMenu {
     private String sizeUpPrice;
     private String img;
     private String state;
+    private boolean size;
     
     public FoodMenu(String name, String price, String img) {
         this.price = price;
         this.name = name;
         this.img = img;
         this.sizeUpPrice = null;
+    }
+    public FoodMenu(String name, String price, String img,boolean size) {
+        this.price = price;
+        this.name = name;
+        this.img = img;
+        this.sizeUpPrice = null;
+        this.size=size;
     }
     
     
@@ -21,7 +29,6 @@ public class FoodMenu {
         this.name = name;
         this.sizeUpPrice = sizeUpPrice;
         this.img = img;
-
     }
     
    
@@ -42,10 +49,14 @@ public class FoodMenu {
         return img;
     }
     public void putState(String state) {
-    	this.state = state;
+       this.state = state;
     }
     
     public String getState() {
-    	return state;
+       return state;
+    }
+    public String Size(){
+        if(size) return"(L)";
+        else return"(R)";
     }
 }
