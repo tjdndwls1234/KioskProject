@@ -11,6 +11,7 @@ class OrderButtonListener implements ActionListener {
     public Cart cart;
     public JPanel cartPanel;
     public FoodMenu menu;
+    public String price;
     public OrderButtonListener(Cart cart,FoodMenu menu, JPanel cartPanel) {
         this.cart = cart;
         this.cartPanel=cartPanel;
@@ -43,7 +44,25 @@ class OrderButtonListener implements ActionListener {
         iceHotPanel.add(iceButton);
         iceHotPanel.add(hotButton);
         orderPanel.add(iceHotPanel);
-
+        
+        JPanel sizePanel = new JPanel();
+        JRadioButton regularButton = new JRadioButton("Regular");
+        JRadioButton sizeUpButton = new JRadioButton("Size Up ( " + menu.getSizeUpPrice() + "원)");
+        ButtonGroup sizeGroup = new ButtonGroup();
+        sizeGroup.add(regularButton);
+        sizeGroup.add(sizeUpButton);
+        sizePanel.add(regularButton);
+        sizePanel.add(sizeUpButton);
+        orderPanel.add(sizePanel);
+        
+        regularButton.setSelected(true); // 기본적으로 Regular 선택
+        price = menu.getPrice();
+        
+        sizeUpButton.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent e) {
+        		price = menu.getSizeUpPrice();
+        	}
+        });
         // ICE 버튼 클릭 시
         iceButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -72,7 +91,8 @@ class OrderButtonListener implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 int quantity = (int) quantitySpinner.getValue();
                 //주문된 메뉴 객체 생성
-                FoodMenu orderedMenu= new FoodMenu(menu.getName(),menu.getPrice(), null);
+                
+                FoodMenu orderedMenu= new FoodMenu(menu.getName(),price ,  null);
                 orderedMenu.putState(menu.getState());
                 cart.addCart(orderedMenu, quantity);
                 updateCartPanel(cart,cartPanel);
@@ -128,6 +148,73 @@ class NonStateOrderButtonListener extends OrderButtonListener {
 
         JLabel menuLabel = new JLabel(menu.getName());
         orderPanel.add(menuLabel);
+        
+        JPanel sizePanel = new JPanel();
+        JRadioButton regularButton = new JRadioButton("Regular");
+        JRadioButton sizeUpButton = new JRadioButton("Size Up ( " + menu.getSizeUpPrice() + "원)");
+        ButtonGroup sizeGroup = new ButtonGroup();
+        sizeGroup.add(regularButton);
+        sizeGroup.add(sizeUpButton);
+        sizePanel.add(regularButton);
+        sizePanel.add(sizeUpButton);
+        orderPanel.add(sizePanel);
+        
+        regularButton.setSelected(true); // 기본적으로 Regular 선택
+        price = menu.getPrice();
+        
+        sizeUpButton.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent e) {
+        		price = menu.getSizeUpPrice();
+        	}
+        });
+
+        JPanel quantityAndNumPanel = new JPanel();
+        JLabel quantityLabel = new JLabel("수량:");
+        quantityAndNumPanel.add(quantityLabel);
+
+        SpinnerModel spinnerModel = new SpinnerNumberModel(1, 1, 10, 1);
+        JSpinner quantitySpinner = new JSpinner(spinnerModel);
+        quantityAndNumPanel.add(quantitySpinner);
+        orderPanel.add(quantityAndNumPanel);
+
+        JButton addToCartButton = new JButton("장바구니에 추가");
+        addToCartButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int quantity = (int) quantitySpinner.getValue();
+                FoodMenu orderedMenu = new FoodMenu(menu.getName(), price, null);
+                cart.addCart(orderedMenu, quantity);
+                updateCartPanel(cart, cartPanel);
+                JOptionPane.showMessageDialog(orderFrame, quantity + "개의 " + menu.getName() + "를 장바구니에 추가했습니다.");
+                orderFrame.dispose();
+            }
+        });
+        orderPanel.add(addToCartButton);
+
+        orderFrame.setLocationRelativeTo(null);
+        orderFrame.setVisible(true);
+    }
+}
+
+class DessertOrderButtonListener extends OrderButtonListener {
+
+    public DessertOrderButtonListener(Cart cart, FoodMenu menu, JPanel cartPanel) {
+        super(cart, menu, cartPanel);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JFrame orderFrame = new JFrame("주문하기 - " + menu.getName());
+        orderFrame.setSize(300, 150);
+        orderFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        JPanel orderPanel = new JPanel();
+        orderPanel.setLayout(new BoxLayout(orderPanel, BoxLayout.Y_AXIS));
+        orderFrame.add(orderPanel);
+
+        JLabel menuLabel = new JLabel(menu.getName());
+        orderPanel.add(menuLabel);
+        
+     
 
         JPanel quantityAndNumPanel = new JPanel();
         JLabel quantityLabel = new JLabel("수량:");

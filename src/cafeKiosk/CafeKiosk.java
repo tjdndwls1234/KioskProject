@@ -207,7 +207,7 @@ public class CafeKiosk extends JFrame {
             ImageIcon icon = new ImageIcon(menu.getImg());
             JButton imgButton = new JButton(icon);
             itemPanel.add(imgButton, BorderLayout.CENTER);
-            imgButton.addActionListener(new NonStateOrderButtonListener(cart, menu, cartPanel));
+            imgButton.addActionListener(new DessertOrderButtonListener(cart, menu, cartPanel));
             
             // 레이블과 버튼이 포함된 패널 생성
             JPanel textPanel = new JPanel();
